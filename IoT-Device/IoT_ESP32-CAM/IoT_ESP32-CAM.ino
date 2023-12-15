@@ -3,6 +3,7 @@
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include <esp_camera.h>
+#include <HTTPClient.h> 
 
 //Our camera 
 #define PWDN_GPIO_NUM     32
@@ -26,8 +27,10 @@
 // 4 for flash led or 33 for normal led
 #define LED_GPIO_NUM       4
 
-const char* ssid = "HUAWEI Pe 20 Pro";
-const char* password = "5035bedbd77c";
+const char* ssid = "Redmi 9";
+const char* password = "";
+
+const char* object_detection_microservice = "http://192.168.178.236:8000/detect/"; // it is not yet static ip over local network
 
 WebServer server(80);
 
@@ -52,6 +55,34 @@ void handleRoot() {
   server.send(200, "text/plain", "hello from esp32!");
   digitalWrite(led, 0);
 }
+
+void handleSendPhoto() {
+  camera_fb_t *fb = esp_camera_fb_get();
+  if (!fb) {
+    Serial.println("Camera capture failed");
+    server.send(500, "text/plain", "Camera capture failed");
+    return;
+  }
+
+  HTTPClient http;
+  http.begin(object_detection_microservice); // Your server URL
+  http.addHeader("Content-Type", "image/jpeg");
+
+  int httpResponseCode = http.POST(fb->buf, fb->len);
+
+  if (httpResponseCode > 0) {
+    String response = http.getString();
+    Serial.println(response);
+    server.send(200, "text/plain", "Photo sent successfully");
+  } else {
+    Serial.println("Error in sending photo");
+    server.send(500, "text/plain", "Error in sending photo");
+  }
+
+  http.end();
+  esp_camera_fb_return(fb);
+}
+
 
 void handleNotFound() {
   digitalWrite(led, 1);
@@ -167,7 +198,9 @@ void setup() {
 
   // Register the handler for the "/capture" endpoint
   server.on("/capture", handleCapture);
+  server.on("/sendPhoto", handleSendPhoto);
   server.on("/", handleRoot);
+
   server.onNotFound(handleNotFound);
 
   server.begin();
