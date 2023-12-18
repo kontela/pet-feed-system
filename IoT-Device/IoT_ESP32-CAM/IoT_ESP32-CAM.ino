@@ -27,17 +27,17 @@
 // 4 for flash led or 33 for normal led
 #define LED_GPIO_NUM       4
 
-const char* ssid = "Redmi 9";
-const char* password = "";
+const char* ssid = "hakan";
+const char* password = "petcare123";
 
-const char* object_detection_microservice = "http://192.168.178.236:8000/detect/"; // it is not yet static ip over local network
+const char* object_detection_microservice = "http://192.168.101.236:8000/detect/"; 
 
 WebServer server(80);
 
 const int led = LED_GPIO_NUM;
 
 
-//below are all endpoints business logic implementations.
+//below are all endpoints with business logic implementations.
 void handleCapture() {
   camera_fb_t *fb = NULL;
   fb = esp_camera_fb_get(); // Take a Picture with Camera
@@ -66,7 +66,7 @@ void handleSendPhoto() {
 
   HTTPClient http;
   http.begin(object_detection_microservice); // Your server URL
-  http.addHeader("Content-Type", "image/jpeg");
+  http.addHeader("Content-Type", "multipart/form-data");
 
   int httpResponseCode = http.POST(fb->buf, fb->len);
 
@@ -150,14 +150,11 @@ void setup() {
   config.xclk_freq_hz = 20000000;
   config.frame_size = FRAMESIZE_UXGA;
   config.pixel_format = PIXFORMAT_JPEG; // for streaming
-  //config.pixel_format = PIXFORMAT_RGB565; // for face detection/recognition
   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
   config.fb_location = CAMERA_FB_IN_PSRAM;
-  config.jpeg_quality = 16; //I reconfigured the quality from 12 to 16
+  config.jpeg_quality = 50; //I reconfigured the quality from 12 to 50
   config.fb_count = 1;
   
-  // if PSRAM IC present, init with UXGA resolution and higher JPEG quality
-  //                      for larger pre-allocated frame buffer.
   if(config.pixel_format == PIXFORMAT_JPEG){
     if(psramFound()){
       config.jpeg_quality = 10;
@@ -196,7 +193,8 @@ void setup() {
   }
 
 
-  // Register the handler for the "/capture" endpoint
+  //send photo endpoint captures photo and sends it to the object detection server.
+  //capture for simple test the camera
   server.on("/capture", handleCapture);
   server.on("/sendPhoto", handleSendPhoto);
   server.on("/", handleRoot);
@@ -208,6 +206,6 @@ void setup() {
 }
 
 void loop(void) {
-  server.handleClient(); // Handles incoming client requests
-  delay(2); // Small delay to prevent WDT timeouts and allow CPU to perform other tasks
+  server.handleClient(); 
+  delay(2); 
 }
