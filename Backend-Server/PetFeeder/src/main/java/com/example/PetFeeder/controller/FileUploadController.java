@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
-@RequestMapping("/api/files")
+@RequestMapping("/api/files/uploadFile")
 public class FileUploadController {
 
     private FileUploadService fileUploadService;
@@ -19,7 +19,7 @@ public class FileUploadController {
     public FileUploadController(FileUploadService fileUploadService){
         this.fileUploadService=fileUploadService;
     }
-    @PostMapping("/uploadFile")
+    @PostMapping
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         fileUploadService.uploadFile(file);
         return ResponseEntity.ok("File uploaded successfully: " + file.getOriginalFilename());

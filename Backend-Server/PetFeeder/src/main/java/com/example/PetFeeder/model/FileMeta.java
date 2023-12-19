@@ -19,7 +19,7 @@ public class FileMeta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "schedule_id")
+    @Column(name = "meta_id")
     private Long id;
 
     @Column(name = "timeOfDay")
