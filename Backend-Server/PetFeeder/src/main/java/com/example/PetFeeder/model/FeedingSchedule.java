@@ -22,4 +22,6 @@ public class FeedingSchedule {
     @Column(name = "timeOfDay")
     private LocalTime timeOfDay;
 
+    @Column(name = "autoFeed")
+    private Boolean autoFeed;
 }
