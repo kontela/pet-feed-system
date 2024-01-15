@@ -95,6 +95,7 @@ void loop() {
   if (LoadCell.update()) newDataReady = true;
 
   command = arduino.readStringUntil('\n');
+  command = Serial.readString();
 
   command.trim();
 
@@ -124,8 +125,7 @@ void loop() {
       delay(500);
 
       step_motorum.setSpeed(10);  
-      step_motorum.step(tamtur/4);
-      // step_motorum.step(-tamtur/4);  
+      step_motorum.step(tamtur/2); 
   }
 
 // KEDİ ALGILAMA İÇin KOD KISMI
@@ -150,12 +150,11 @@ for(int i = 0 ;i<3;i++){
     }
 }
 
-if(deg >=2){
+if(deg >=3){
   Serial.println("Kedi Geldi");
   arduino.print("<S;");
   arduino.print("Cat");
   arduino.print(">");
-  // arduino.println("Kedi Geldi");
 }
 
 
