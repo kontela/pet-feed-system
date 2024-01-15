@@ -95,7 +95,6 @@ void loop() {
   if (LoadCell.update()) newDataReady = true;
 
   command = arduino.readStringUntil('\n');
-  command = Serial.readString();
 
   command.trim();
 
