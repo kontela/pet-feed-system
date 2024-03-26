@@ -2,7 +2,7 @@
  Automating and monitoring pet feeding remotely with integrating mobile app, IoT, and AI-powered YOLO.
 
  You can view the system design of the project.
-![Pet Feed System Design](pet-feed-system-system-design.pdf)
+![Pet Feed System Design](images/pet-feed-system-design.jpg)
 
 
 ## Credits
